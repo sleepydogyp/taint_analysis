@@ -1,6 +1,6 @@
 package com.analysis.controlFlowGraph;
 
-import com.analysis.core.MethodInfo;
+import patdroid.core.MethodInfo;
 
 public class CFGStructure {
 

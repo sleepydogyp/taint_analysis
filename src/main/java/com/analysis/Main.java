@@ -1,17 +1,13 @@
 package com.analysis;
 
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.analysis.core.Scope;
-import com.analysis.smali.SmaliClassDetailLoader;
+import patdroid.core.Scope;
+import patdroid.smali.SmaliClassDetailLoader;
 import com.analysis.taint.Controller;
-import com.analysis.util.ParseManifest;
+import patdroid.util.ParseManifest;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.zip.ZipFile;
 
 public class Main {

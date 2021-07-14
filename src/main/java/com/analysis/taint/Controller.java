@@ -2,13 +2,13 @@ package com.analysis.taint;
 
 import com.analysis.callgraph.CGGraph;
 import com.analysis.controlFlowGraph.CFGStructure;
-import com.analysis.core.ClassInfo;
-import com.analysis.core.FieldInfo;
-import com.analysis.core.MethodInfo;
-import com.analysis.core.Scope;
-import com.analysis.dalvik.Instruction;
-import com.analysis.dalvik.Invocation;
-import com.analysis.util.Pair;
+import patdroid.core.ClassInfo;
+import patdroid.core.FieldInfo;
+import patdroid.core.MethodInfo;
+import patdroid.core.Scope;
+import patdroid.dalvik.Instruction;
+import patdroid.dalvik.Invocation;
+import patdroid.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

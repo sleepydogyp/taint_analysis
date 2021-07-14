@@ -1,9 +1,9 @@
 package com.analysis.taint;
 
 import com.analysis.callgraph.CGGraph;
-import com.analysis.core.MethodInfo;
-import com.analysis.dalvik.Instruction;
-import com.analysis.dalvik.Invocation;
+import patdroid.core.MethodInfo;
+import patdroid.dalvik.Instruction;
+import patdroid.dalvik.Invocation;
 
 import java.util.ArrayList;
 import java.util.List;

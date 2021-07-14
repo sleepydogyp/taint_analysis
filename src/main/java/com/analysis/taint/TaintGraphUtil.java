@@ -1,7 +1,6 @@
 package com.analysis.taint;
 
-import com.analysis.AbstractGraph;
-import com.analysis.dalvik.Instruction;
+import patdroid.dalvik.Instruction;
 
 import java.util.ArrayList;
 import java.util.List;

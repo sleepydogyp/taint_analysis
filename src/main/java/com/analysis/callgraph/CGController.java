@@ -1,10 +1,10 @@
 package com.analysis.callgraph;
 
-import com.analysis.core.ClassInfo;
-import com.analysis.core.MethodInfo;
-import com.analysis.core.Scope;
-import com.analysis.dalvik.Instruction;
-import com.analysis.dalvik.Invocation;
+import patdroid.core.ClassInfo;
+import patdroid.core.MethodInfo;
+import patdroid.core.Scope;
+import patdroid.dalvik.Instruction;
+import patdroid.dalvik.Invocation;
 
 public class CGController {
 

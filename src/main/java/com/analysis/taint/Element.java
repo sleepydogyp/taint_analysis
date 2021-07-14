@@ -1,8 +1,8 @@
 package com.analysis.taint;
 
 import com.alibaba.fastjson.JSONObject;
-import com.analysis.core.ClassInfo;
-import com.analysis.dalvik.Instruction;
+import patdroid.core.ClassInfo;
+import patdroid.dalvik.Instruction;
 
 public class Element {
 

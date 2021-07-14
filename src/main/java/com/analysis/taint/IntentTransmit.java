@@ -1,10 +1,10 @@
 package com.analysis.taint;
 
 import com.alibaba.fastjson.JSONArray;
-import com.analysis.core.MethodInfo;
-import com.analysis.dalvik.Instruction;
-import com.analysis.dalvik.Invocation;
-import com.analysis.util.ParseManifest;
+import patdroid.core.MethodInfo;
+import patdroid.dalvik.Instruction;
+import patdroid.dalvik.Invocation;
+import patdroid.util.ParseManifest;
 
 import java.util.HashMap;
 import java.util.Map;

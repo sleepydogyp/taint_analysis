@@ -2,7 +2,7 @@ package com.analysis.callgraph;
 
 
 import com.analysis.AbstractGraph;
-import com.analysis.core.MethodInfo;
+import patdroid.core.MethodInfo;
 
 import java.util.*;
 
