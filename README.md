@@ -2,7 +2,7 @@
 
 - 目的是检测Android应用获取用户隐私的情况。
 
-- 依据FlowDroid的`SourceAndSinks.txt`,生成了本工具的Source和Sinks。
+- 依据FlowDroid的[SourceAndSinks.txt](https://github.com/secure-software-engineering/soot-infoflow-android/blob/develop/SourcesAndSinks.txt),生成了本工具的Source和Sinks。
 
 - smali文件的解析使用了github上一个博主的开源项目[PATDroid](https://github.com/mingyuan-xia/PATDroid)，非常感谢~~
 

@@ -38,7 +38,6 @@ public class Controller {
 //        cgGraph.outputCG();
 //        outputCFG();
 
-
         long startTime = System.currentTimeMillis();
 
         // 污染源和陷入点初始化
@@ -47,7 +46,7 @@ public class Controller {
 
         // 1.先过滤一遍获取敏感信息的SOURCE，找到路径，并补充taintFields； 2.将上一遍得到的路径清空，再过滤一遍,加入taintFields
         int i = 1;
-        while (i < 3){
+        while (i < 3) {
             taintGraphs.clear();
             noSinkGraphs.clear();
             for (ClassInfo c : scope.getAllClasses()) {
@@ -99,8 +98,26 @@ public class Controller {
 
                 // TODO： 多条污染路径同时开始，暂时采用路径不分离，混合存放的方法
                 if (TaintAPIs.sources.contains(calledMethod)) {
-                    // 污染源
-                    // 一条污染线路的起始
+                    // "android.content.ContentResolver/query"调用语句，将它的Uri参数也加入taintGraph
+                    if (calledMethod.startsWith("android.content.ContentResolver/query")) {
+                        int arg1 = invoSt.args[1];
+                        int dstReg = -1;
+                        for (int j = i - 1; j >= 0; j--) {
+                            Instruction instUri = m.insns[j];
+                            if ("SGET".equals(instUri.getOpaux_name())) {
+                                dstReg = (int) instUri.r0;
+                            } else if ("IGET".equals(instUri.getOpaux_name())) {
+                                dstReg = (int) instUri.r1;
+                            } else if (("MOV".equals(instUri.getOP())) && ("CONST".equals(instUri.getOpaux_name()))) {
+                                dstReg = (int) instUri.rdst;
+                            }
+                            if (dstReg == arg1) {
+                                TaintGraphUtil.addElement(taintGraph, methodFullName, instUri, j);
+                                break;
+                            }
+                        }
+                    }
+                    // 污染源，一条污染线路的起始
                     TaintGraphUtil.addElement(taintGraph, methodFullName, inst, i);
                     i++;
                     Instruction instNext = m.insns[i];
@@ -154,7 +171,7 @@ public class Controller {
                             MethodInfo method = invoSt.target;
                             if ((method.insns == null) || (calledMethod.contains("getMethod"))) {   // Native方法或反射方法或其他底层方法的insns均为null，直接认为其返回值被污染了
                                 boolean hasMovResult = addNullMethod(taintGraph, taintRegs, m, methodFullName, inst, i, (short) args[0]);
-                                if(hasMovResult){
+                                if (hasMovResult) {
                                     i++;
                                 }
                             } else {
@@ -176,7 +193,7 @@ public class Controller {
             } else if ("MOV".equals(inst.getOP())) {
                 if (taintGraph != null) {
                     Instruction lastInst = m.insns[i - 1];
-                    MOVAnalyse(taintGraph, methodFullName, inst, i, taintRegs, lastInst, taintGraph);
+                    MOVAnalyse(taintGraph, methodFullName, inst, i, taintRegs, lastInst);
                 }
             } else if (inst.getOpaux_name().contains("GET")) {
                 // 判断是否取出了被污染的全局变量
@@ -198,17 +215,17 @@ public class Controller {
                         Instruction nextInst = m.insns[i + 1];
                         if ("INVOKE".equals(nextInst.getOP())) {
                             Invocation invoNext = (Invocation) nextInst.extra;
-                            if (((invoNext.target.toString().contains("/put[")) || (invoNext.target.toString().contains("/add["))) && (invoNext.args.length > 1) && ((short)invoNext.args[0] == fieldReg) && (taintRegs.contains((short)invoNext.args[1]))) {
+                            if (((invoNext.target.toString().contains("/put[")) || (invoNext.target.toString().contains("/add["))) && (invoNext.args.length > 1) && ((short) invoNext.args[0] == fieldReg) && (taintRegs.contains((short) invoNext.args[1]))) {
                                 taintFields.add(inst.extra.toString());
                                 i++;
                             }
                         }
 
-                    }else if(("STATIC".equals(inst.getOP())) && ("SGET".equals(inst.getOpaux_name())) && (inst.extra instanceof Pair)){  // 静态全局变量
+                    } else if (("STATIC".equals(inst.getOP())) && ("SGET".equals(inst.getOpaux_name())) && (inst.extra instanceof Pair)) {  // 静态全局变量
                         Instruction nextInst = m.insns[i + 1];
                         if ("INVOKE".equals(nextInst.getOP())) {
                             Invocation invo = (Invocation) nextInst.extra;
-                            if (((invo.target.toString().contains("/put[")) || (invo.target.toString().contains("/add["))) && (invo.args.length > 1) && (taintRegs.contains((short)invo.args[1]))) {
+                            if (((invo.target.toString().contains("/put[")) || (invo.target.toString().contains("/add["))) && (invo.args.length > 1) && (taintRegs.contains((short) invo.args[1]))) {
                                 taintFields.add(inst.extra.toString());
                                 i++;
                             }
@@ -293,7 +310,7 @@ public class Controller {
                                     MethodInfo method = invoSt.target;
                                     if (method.insns == null) {
                                         boolean hasMovResult = addNullMethod(taints, taintRegs, m, methodFullName, inst, i, (short) args[0]);
-                                        if(hasMovResult){
+                                        if (hasMovResult) {
                                             i++;
                                         }
                                     } else {
@@ -310,12 +327,12 @@ public class Controller {
 
                     } else if ("MOV".equals(inst.getOP())) {
                         Instruction lastInst = m.insns[i - 1];
-                        MOVAnalyse(taints, methodFullName, inst, i, taintRegs, lastInst, taints);
+                        MOVAnalyse(taints, methodFullName, inst, i, taintRegs, lastInst);
 
                     } else if ("IF".equals(inst.getOP())) {
                         // IF语句直接按顺序执行
                         if (taintRegs.contains(inst.r0)) {
-                            TaintGraphUtil.addElement(taints, methodFullName, inst, i);
+//                            TaintGraphUtil.addElement(taints, methodFullName, inst, i);
                         } else {
                             continue;
                         }
@@ -329,7 +346,7 @@ public class Controller {
         return taints;
     }
 
-    private void MOVAnalyse(ArrayList<Element> taintGraph, String methodFullName, Instruction inst, int insnIndex, List<Short> taintRegs, Instruction lastInst, ArrayList<Element> taints) {
+    private void MOVAnalyse(ArrayList<Element> taintGraph, String methodFullName, Instruction inst, int insnIndex, List<Short> taintRegs, Instruction lastInst) {
         if ("REG".equals(inst.getOpaux_name())) {
             if (taintRegs.contains(inst.r0)) {
                 taintRegs.add(inst.rdst);
@@ -349,7 +366,7 @@ public class Controller {
             // 如果上一句为INVOKE，且在taintGraph中，则需要将这个返回值的寄存器加入taintRegs
             boolean lastInsnIsTaint = false;
             if (lastInst.opcode == 12) {
-                for (Object elementObj : taints) {
+                for (Object elementObj : taintGraph) {
                     Element element = (Element) elementObj;
                     if (lastInst.toString().equals(element.getInsn())) {
                         TaintGraphUtil.addElement(taintGraph, methodFullName, inst, insnIndex);

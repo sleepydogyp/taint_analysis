@@ -17,19 +17,16 @@ public class TaintAPIs {
     private TaintAPIs() {
         String dir = "H:\\MyGithub\\taint_analysis\\config\\";
         String file = dir + "SourceAndSink.txt";
-        String httpSinkFile = dir + "InfoSinks.txt";
+//        String httpSinkFile = dir + "InfoSinks.txt";
         String sourcesFile = dir + "InfoLeakageSources.txt";
         initSourceAndSink(file);
-        initSourceAndSink(httpSinkFile);
+//        initSourceAndSink(httpSinkFile);
         initSourceAndSink(sourcesFile);
     }
-
-    ;
 
     public static TaintAPIs getInstance() {
         if (taintAPIs == null) {
             taintAPIs = new TaintAPIs();
-
         }
         return taintAPIs;
     }
